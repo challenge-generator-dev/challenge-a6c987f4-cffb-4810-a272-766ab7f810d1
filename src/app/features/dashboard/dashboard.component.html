@@ -1,0 +1,151 @@
+<div class="dashboard-container" [class.sidebar-collapsed]="sidebarCollapsed()">
+  <aside class="sidebar" role="navigation" aria-label="Menú principal">
+    <div class="sidebar-header">
+      <img 
+        src="assets/logo.svg" 
+        alt="Logo Banco"
+        width="120"
+        height="40"
+        fetchpriority="high"
+        loading="eager">
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item active">
+          <a routerLink="/dashboard" aria-current="page">
+            <span class="material-icon">dashboard</span>
+            <span class="nav-label">Inicio</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/accounts">
+            <span class="material-icon">account_balance</span>
+            <span class="nav-label">Cuentas</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/cards">
+            <span class="material-icon">credit_card</span>
+            <span class="nav-label">Tarjetas</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/loans">
+            <span class="material-icon">request_quote</span>
+            <span class="nav-label">Préstamos</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/investments">
+            <span class="material-icon">show_chart</span>
+            <span class="nav-label">Inversiones</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <button 
+      class="sidebar-toggle"
+      (click)="toggleSidebar()"
+      [attr.aria-expanded]="!sidebarCollapsed()"
+      aria-controls="sidebar"
+      aria-label="Alternar menú lateral">
+      <span class="material-icon">{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</span>
+    </button>
+  </aside>
+
+  <main class="main-content" role="main">
+    <header class="content-header">
+      <h1 class="page-title">Resumen de tu cuenta</h1>
+      <div class="user-info">
+        <span class="user-name">Cliente Premium</span>
+        <img 
+          src="assets/avatar-placeholder.svg" 
+          alt="Avatar del usuario"
+          width="40"
+          height="40"
+          loading="lazy"
+          class="user-avatar">
+      </div>
+    </header>
+
+    @if (isLoading()) {
+      <div class="loading-state" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Cargando información de tu cuenta...</p>
+      </div>
+    } @else if (hasError()) {
+      <div class="error-state" role="alert">
+        <span class="material-icon error-icon">error_outline</span>
+        <p>{{ errorMessage() }}</p>
+        <button class="retry-button" (click)="loadDashboardData()">
+          Reintentar
+        </button>
+      </div>
+    } @else {
+      <section class="metrics-section" aria-labelledby="metrics-title">
+        <h2 id="metrics-title" class="sr-only">Métricas financieras</h2>
+        
+        <article class="metric-card primary">
+          <h3 class="metric-label">Saldo total disponible</h3>
+          <p class="metric-value">{{ formatCurrency(metrics().totalBalance) }}</p>
+          <span class="metric-trend positive">+2.3% este mes</span>
+        </article>
+
+        <article class="metric-card">
+          <h3 class="metric-label">Ingresos del mes</h3>
+          <p class="metric-value income">{{ formatCurrency(metrics().monthlyIncome) }}</p>
+        </article>
+
+        <article class="metric-card">
+          <h3 class="metric-label">Gastos del mes</h3>
+          <p class="metric-value expense">{{ formatCurrency(metrics().monthlyExpenses) }}</p>
+        </article>
+
+        <article class="metric-card">
+          <h3 class="metric-label">Tasa de ahorro</h3>
+          <p class="metric-value">{{ metrics().savingsRate }}%</p>
+          <span class="metric-badge">Excelente</span>
+        </article>
+      </section>
+
+      <section class="quick-actions-section" aria-labelledby="quick-actions-title">
+        <h2 id="quick-actions-title">Acciones rápidas</h2>
+        <div class="quick-actions-grid" role="group" aria-label="Acciones disponibles">
+          @for (action of quickActions; track trackByQuickAction($index, action)) {
+            <button 
+              class="quick-action-button"
+              (click)="onQuickAction(action)"
+              [attr.aria-label]="action.label">
+              <span class="material-icon action-icon">{{ action.icon }}</span>
+              <span class="action-label">{{ action.label }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="transactions-section" aria-labelledby="transactions-title">
+        <div class="section-header">
+          <h2 id="transactions-title">Transacciones recientes</h2>
+          <a routerLink="/transactions" class="view-all-link">Ver todas</a>
+        </div>
+
+        <div class="transactions-list" role="list">
+          @for (transaction of recentTransactions(); track trackByTransaction($index, transaction)) {
+            <app-transaction-card
+              [transaction]="transaction"
+              (transactionClick)="onTransactionClick($event)"
+              role="listitem">
+            </app-transaction-card>
+          } @empty {
+            <div class="empty-state">
+              <span class="material-icon">receipt_long</span>
+              <p>No hay transacciones recientes</p>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </main>
+</div>

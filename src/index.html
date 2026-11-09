@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Financial Portal - Portal Transaccional</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portal transaccional de la institución financiera - Gestión de cuentas, transferencias y pagos">
+  <meta name="theme-color" content="#1976d2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Material+Icons" rel="stylesheet">
+  
+  <link rel="preload" href="styles.css" as="style">
+  <link rel="preload" href="main.js" as="script">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    #app {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .app-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      z-index: 9999;
+    }
+    
+    .app-loading .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #1976d2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .app-loading .message {
+      margin-top: 16px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      .app-loading .spinner {
+        animation: none;
+        border-top-color: #1976d2;
+      }
+    }
+  </style>
+  
+  <script>
+    (function() {
+      var initialColor = document.documentElement.style.getPropertyValue('--initial-bg');
+      if (!initialColor) {
+        document.documentElement.style.setProperty('--initial-bg', '#f5f7fa');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <app-root>
+    <div class="app-loading">
+      <div class="spinner"></div>
+      <div class="message">Cargando Financial Portal...</div>
+    </div>
+  </app-root>
+  
+  <noscript>
+    <div style="padding: 40px; text-align: center; font-family: system-ui; background: #fff3f3; min-height: 100vh;">
+      <h1 style="color: #d32f2f;">JavaScript Requerido</h1>
+      <p style="margin-top: 16px; color: #666;">Esta aplicación requiere JavaScript para funcionar. Por favor, habilite JavaScript en su navegador.</p>
+    </div>
+  </noscript>
+  
+  <script>
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/ngsw-worker.js').then(function(registration) {
+          console.log('SW registrado:', registration.scope);
+        }).catch(function(error) {
+          console.log('SW no registrado:', error);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
